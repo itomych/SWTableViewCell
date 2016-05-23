@@ -13,7 +13,7 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
 
 #define kSectionIndexWidth 15
 #define kAccessoryTrailingSpace 15
-#define kLongPressMinimumDuration 0.16f
+#define kLongPressMinimumDuration 0.2f
 
 @interface SWTableViewCell () <UIScrollViewDelegate,  UIGestureRecognizerDelegate>
 
@@ -383,19 +383,7 @@ static NSString * const kTableViewPanState = @"state";
 {
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan && !self.isHighlighted && self.shouldHighlight)
     {
-        [self setHighlighted:YES animated:NO];
-    }
-    
-    else if (gestureRecognizer.state == UIGestureRecognizerStateEnded)
-    {
-        // Cell is already highlighted; clearing it temporarily seems to address visual anomaly.
-        [self setHighlighted:NO animated:NO];
         [self scrollViewTapped:gestureRecognizer];
-    }
-    
-    else if (gestureRecognizer.state == UIGestureRecognizerStateCancelled)
-    {
-        [self setHighlighted:NO animated:NO];
     }
 }
 
@@ -493,6 +481,7 @@ static NSString * const kTableViewPanState = @"state";
 
 - (void)hideUtilityButtonsAnimated:(BOOL)animated
 {
+    _contentCellView.userInteractionEnabled = YES;
     if (_cellState != kCellStateCenter)
     {
         [self.cellScrollView setContentOffset:[self contentOffsetForCellState:kCellStateCenter] animated:animated];
@@ -505,6 +494,7 @@ static NSString * const kTableViewPanState = @"state";
 }
 
 - (void)showLeftUtilityButtonsAnimated:(BOOL)animated {
+    _contentCellView.userInteractionEnabled = NO;
     if (_cellState != kCellStateLeft)
     {
         [self.cellScrollView setContentOffset:[self contentOffsetForCellState:kCellStateLeft] animated:animated];
@@ -517,6 +507,7 @@ static NSString * const kTableViewPanState = @"state";
 }
 
 - (void)showRightUtilityButtonsAnimated:(BOOL)animated {
+    _contentCellView.userInteractionEnabled = NO;
     if (_cellState != kCellStateRight)
     {
         [self.cellScrollView setContentOffset:[self contentOffsetForCellState:kCellStateRight] animated:animated];
