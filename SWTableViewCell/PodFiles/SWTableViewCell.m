@@ -640,7 +640,7 @@ static NSString * const kTableViewPanState = @"state";
             self.longPressGestureRecognizer.enabled = NO;
         }
         
-        self.cellScrollView.scrollEnabled = YES;
+        self.cellScrollView.scrollEnabled = NO;
     }
 }
 
