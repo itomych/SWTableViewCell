@@ -409,7 +409,11 @@ static NSString * const kTableViewPanState = @"state";
         }
         else if (self.shouldHighlight) // UITableView refuses selection if highlight is also refused.
         {
-            [self selectCell];
+            if ([gestureRecognizer isKindOfClass:[SWLongPressGestureRecognizer class]]) {
+                [self showLeftUtilityButtonsAnimated:YES];
+            } else {
+                [self selectCell];
+            }
         }
     }
     else
@@ -636,7 +640,7 @@ static NSString * const kTableViewPanState = @"state";
             self.longPressGestureRecognizer.enabled = NO;
         }
         
-        self.cellScrollView.scrollEnabled = !self.isEditing;
+        self.cellScrollView.scrollEnabled = YES;
     }
 }
 
