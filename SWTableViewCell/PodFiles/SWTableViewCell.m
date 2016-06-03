@@ -10,6 +10,7 @@
 #import "SWUtilityButtonView.h"
 
 static NSString * const kTableViewCellContentView = @"UITableViewCellContentView";
+static NSString * const kTableViewCellLeftMenuDidOpenNotification = @"SWTableViewCellLeftMenuDidOpenNotification";
 
 #define kSectionIndexWidth 15
 #define kAccessoryTrailingSpace 15
@@ -78,6 +79,7 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
 {
     layoutUpdating = NO;
     // Set up scroll view that will host our cell content
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didOpenNotification:) name:kTableViewCellLeftMenuDidOpenNotification object:nil];
     self.cellScrollView = [[SWCellScrollView alloc] init];
     self.cellScrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.cellScrollView.delegate = self;
@@ -189,6 +191,13 @@ static NSString * const kTableViewPanState = @"state";
 {
     _cellScrollView.delegate = nil;
     [self removeOldTableViewPanObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kTableViewCellLeftMenuDidOpenNotification object:nil];
+}
+
+- (void)didOpenNotification:(NSNotification *)notification {
+    if (notification.object != self) {
+        [self hideUtilityButtonsAnimated:YES];
+    }
 }
 
 - (void)setContainingTableView:(UITableView *)containingTableView
@@ -398,6 +407,7 @@ static NSString * const kTableViewPanState = @"state";
         else if (self.shouldHighlight) // UITableView refuses selection if highlight is also refused.
         {
             if ([gestureRecognizer isKindOfClass:[SWLongPressGestureRecognizer class]]) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kTableViewCellLeftMenuDidOpenNotification object:self];
                 [self showLeftUtilityButtonsAnimated:YES];
             } else {
                 [self selectCell];
